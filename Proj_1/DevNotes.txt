@@ -1,0 +1,44 @@
+superuser = superadmin
+email is the me
+pw SuperPass99
+
+Piet - PietPass
+MonkeyNuts = MonkeyPass
+
+
+setups:
+
+python3 manage.py startapp work_posts
+
+Clearing the db to implement Slug or just fix major issues:
+add slugfield to Post model
+delete all content of the image/media_Cdn folder
+delete all migrations (NOT --init--.py!)
+
+
+Fixing migrations without deleting the db:
+-----------------------------------------
+python manage.py migrate --fake appName zero
+python manage.py showmigrations
+then delete all the migrations (not the __init__ file)
+python manage.py makemigrations
+python manage.py migrate --fake-initial
+After this I checked the db structure - found that a new column did not exist, but its in the model
+commented it out, then make migrations / migrate
+then added it back in and repeated
+
+
+PageDown:
+========
+on field text editor to allow formatting fo text similar to stackoverflow allowing code snippets etc
+steps:
+1. add package
+2. add to installed apps in settings.py
+3. run collect static :python manage.py collectstatic
+
+PageDown - deux= package to not use the javascript method but a python package
+==============================================================================
+install
+add to apps iin settings
+
+

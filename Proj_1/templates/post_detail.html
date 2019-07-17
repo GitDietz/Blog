@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load urlify %}
+{% block head_title %}
+    {{ instance.title }} | {{ block.super }}
+{% endblock head_title%}
+{% block content %}
+<div class="col-sm-6 col-sm-offset-3">
+
+<h2>Our Post detail form</h2>
+    <p>
+        This is the Post_detail page<br/>
+        {% if instance.image %}
+            <img src="{{ instance.image.url }}" class="img-responsive img-thumbnail" /><br/>
+        {% endif %}
+        Post Made :{{ instance.id }} {{ instance.title }}<br/>
+        Status =
+        {% if instance.draft %}
+        <span style="color:red;">Draft</span>
+        {% else %}
+        Published
+        {% endif %}
+        <br><hr/>
+
+        <!-- <div class="content-markdown"> now disabled due to the server operation of the markdown-->
+        <!--    Post Content : {{ instance.content }}<br/> -->
+            {{ instance.get_markdown | truncatewords_html:8 }}
+            On : {{ instance.create_date }}<br/>
+            Updated: {{ instance.update_date }}<br/>
+       <!--  </div> -->
+    </p><hr/>
+    {% if instance.user.get_full_name %}
+        <p>Author: {{ instance.user.get_full_name }}</p>
+    {% else %}
+        <p>{{ instance.user.name }}</p>
+    {% endif %}
+    <hr/>
+    {# request.build_absolute_uri #}
+    {# share_string #}Share string:
+    {{ instance.content|truncatechars:20|urlify }}<br/>
+
+    <p><div class="fb-like" data-href="{{ request.build_absolute_uri }}" data-layout="button_count" data-action="like" data-show-faces="true" data-share="true"></div>
+        <span class="fb-comments-count" data-href="{{ request.build_absolute_uri }}"></span>
+        awesome comments
+    <div class="fb-comments" data-href="{{ request.build_absolute_uri }}" data-width="85%" data-numposts="5"></div>
+    <hr/>
+
+    <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}"> Facebook </a>
+    <a href="https://twitter.com/home?status={{ instance.content|truncatechars:80|urlify  }}%20{{ request.build_absolute_uri }}">
+         Twitter
+    </a>
+    <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ request.build_absolute_uri }}&
+        title={{ instance.title }}%20&summary={{ instance.content|truncatechars:80|urlify  }}%20&source={{ request.build_absolute_uri }}">
+         Linkedin
+    </a>
+</div>
+{% endblock content%}
+

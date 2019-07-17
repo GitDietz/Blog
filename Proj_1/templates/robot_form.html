@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="col-sm-6 col-sm-offset-3">
+<h2>Our Robot form</h2>
+
+    <form method='POST' action="" enctype="multipart/form-data">
+        {% csrf_token %}
+        Add a new Robot's details below<br/>
+
+        {{ form.as_p }}
+        {% if instance.title %}
+        <input type='submit' class="btn btn-secondary" value = 'Update Robot'/>
+        {% else %}
+        <input type='submit' class="btn btn-secondary" value = 'Create Robot'/>
+        {% endif %}
+    </form>
+</div>
+{% endblock content%}
+
+

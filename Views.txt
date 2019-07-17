@@ -1,0 +1,27 @@
+Views
+
+make a request
+view reacts
+response follows
+
+
+
+URLS
+
+regex pattern e.g.
+expression groups is (?P<name>pattern), where name is the name of the group and pattern is some pattern to match.
+what i had in locallib : path('^book_update/(?P<pk>[\w-]+)/$', views.BookUpdate.as_view(), name='book_update'),
+
+See the online docs for very good methods
+
+SHELL
+python3 manage.py shell
+
+
+
+QUERYSET
+
+in shell run:  from work_posts.models import Post
+then Post.objects.all()
+queryset = Post.objects.all() -- makes it possible to define the query set esp for debugging ithink
+

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="col-sm-6 col-sm-offset-3">
+<h1>Our Robot fleet</h1>
+
+<div class="card-deck">
+    <div class="col-sm-12">
+{% for obj in object_list %}
+
+        <div class="card" style="max-width: 400px;">
+           {% if obj.image %} <img src="{{ obj.image }}" class="card-img-top" >{% endif %}
+        <div class="card-body">
+            <h5 class="card-title">{{ obj.id }}. {{ obj.name }}</h5>
+        <p class="card-text">{{ obj.job|linebreaks|truncatechars:120 }}</p>
+            <p> <a href='{{ obj.get_absolute_url }}' class = 'btn btn-primary' role='button'>View</a>   </p>
+
+         <div class="card-footer text-muted">
+
+         </div>
+        </div></div>
+        <div class="mt-3" /></div>
+<!--{% cycle "" "</div><div class='row'>" %}  if you want to ensure there is a break after each group this will insert the extra row class-->
+    <!-- -->
+ <!--model content = name /number/job  <a href='{# obj.get_absolute_url #}'-->
+{% endfor %}
+</div>
+    <div class="pagination">
+    <span class="step-links">
+        {% if object_list.has_previous %}
+            <a href="?{{ page_request_var }}={{ contacts.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ object_list.number }} of {{ object_list.paginator.num_pages }}.
+        </span>
+
+        {% if object_list.has_next %}
+            <a href="?{{ page_request_var }}={{ object_list.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+    </div>
+
+</div>
+{% endblock content%}
+
+
+
+
+

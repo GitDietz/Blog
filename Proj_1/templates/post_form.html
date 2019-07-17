@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block head_extra %}
+{{  form.media }} {# the object needed to bring the css content into the  template#}
+{% endblock head_extra %}
+{% block content %}
+<div class="col-sm-6 col-sm-offset-3">
+<h2>Our Post form</h2>
+
+    <form method='POST' action="" enctype="multipart/form-data">
+        <!--With no defined method it defaults to Get that only adds it to the URL . Action defined the destination. the enctype required for data transfer-->
+        <!--also require changes to the views to pass the data -->
+        {% csrf_token %}
+        We'll do some posts...Add it below, will ya?
+        {{ form.as_p }}
+        {% if instance.title %}
+        <input type='submit' class="btn btn-secondary" value = 'Update Post'/>
+        {% else %}
+        <input type='submit' class="btn btn-secondary" value = 'Create Post'/>
+        {% endif %}
+    </form>
+</div>
+{% endblock content%}
