@@ -2,7 +2,7 @@ superuser = superadmin
 email is the me
 pw SuperPass99
 
-Piet - PietPass
+Piet - PLongPass
 MonkeyNuts = MonkeyPass
 
 
@@ -40,5 +40,27 @@ PageDown - deux= package to not use the javascript method but a python package
 ==============================================================================
 install
 add to apps iin settings
+
+
+Crispy forms
+============
+install the package
+add to Settings installed apps
+add CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+in the template files:
+add {% load crispy_forms_tags %}
+edit {{ form.as_p }} to {{ form|crispy }}
+may require some modification to the css to change margins
+the div name is .wmd-panel
+edit the base.css in static/css
+add div and change properties
+.wmd-panel {
+    margin-left: 0% !important;
+    margin-right: 0% !important;
+}
+important ensured it is not over ridden
+
+need to run collect static to move the files to the cdn
 
 

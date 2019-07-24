@@ -43,3 +43,8 @@ RUNNING!
 set woking directory
 
 Can add other apps to the same space by running django.admin startproject my_new_project_name again
+===========================
+Transferring to another installation
+created new venv
+Manually added all the pacckages direct to the venv after activation
+Now going to reopen the project

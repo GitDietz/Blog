@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
 {% block head_extra %}
 {{  form.media }} {# the object needed to bring the css content into the  template#}
 {% endblock head_extra %}
@@ -11,7 +12,7 @@
         <!--also require changes to the views to pass the data -->
         {% csrf_token %}
         We'll do some posts...Add it below, will ya?
-        {{ form.as_p }}
+        {{ form|crispy }}
         {% if instance.title %}
         <input type='submit' class="btn btn-secondary" value = 'Update Post'/>
         {% else %}
