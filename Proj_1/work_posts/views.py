@@ -1,10 +1,13 @@
 from urllib.parse import quote_plus
-from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect,Http404
-from django.contrib import messages
+from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
+
+from comments.models import Comment 
 from .models import Post, Robot
 from .forms import PostForm, RobotForm #this now to create the link to the forms module
 
@@ -15,7 +18,6 @@ def post_create(request): #when the form submits, it requests the same url, come
     form = PostForm(request.POST or None, request.FILES or None)
     if form.is_valid():
         instance = form.save(commit=False)
-        # print(form.cleaned_data.get('title'))
         instance.user = request.user
         instance.save()
         messages.success(request,'Successfully saved')
@@ -29,24 +31,38 @@ def post_create(request): #when the form submits, it requests the same url, come
     #     print(request.POST.get('content'))
     #     print(request.POST.get('title'))
     context = {
-        'form':form
+        'form': form,
     }
     return render(request, 'post_form.html', context)
 
-    #return HttpResponse("<p>Hellow Wolly - create</p>")
+
+def is_published(publish_date):
+    if publish_date != None:
+        if publish_date >  timezone.now().date():
+            return True
+    return False
 
 def post_detail(request, slug=None):
     instance = get_object_or_404(Post,slug=slug) #can use any parameter in the model
-    if instance.draft or instance.publish > timezone.now().date():
+    if instance.draft or is_published(instance.publish):
         if not request.user.is_superuser or not request.user.is_staff:
             raise Http404
     share_string = quote_plus(instance.content) #this used for public sharing
+    # below was the first method to get the comments per post
+    # content_type = ContentType.objects.get_for_model(Post)
+    # obj_id = instance.id # now handled by the method in the model
+    # comments = Comment.objects.filter(content_type = content_type, object_id = obj_id)
+    comments = Comment.objects.filter_by_instance(instance) # can define other types as well to suit
+    # if you want to use the comments as a property, remove the line above and take the one below
+    # comments = instance.comments  - this is the property
+
     form = PostForm(request.POST or None, request.FILES or None, instance=instance)
     context = {
         'instance':instance,
         'title':instance.title,
         'form':form,
         'share_string':share_string,
+        'comments' : comments,
     }
     return render(request, 'post_detail.html', context)
 

@@ -8,14 +8,20 @@ from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 from markdown_deux import markdown
 
+from comments.models import Comment
+
 class PostManager(models.Manager):
     def active(self, *args, **kwargs):
-        # below is the same as stating Post.objects.all() = super(PostManager, self).all()
+        # below is the same as stating Post.objects.all() = super(PostManager, self).all(). Not anymore it now applies filters
         return super(PostManager, self).filter(draft=False).filter(publish__lte=timezone.now())
 
 
 def upload_location(instance, filename):
-    return "%s/%s" %(instance.id, filename)
+    # now getting the last id incrementing it
+    PostModel = instance.__class__
+    new_id = PostModel.objects.order_by("id").last().id + 1
+    return "%s/%s" % (new_id, filename)
+
 
 # Create your models here.
 class Post(models.Model):
@@ -31,7 +37,7 @@ class Post(models.Model):
     width_field = models.IntegerField(default=0)
     content = models.TextField()
     draft = models.BooleanField(default=False)
-    publish = models.DateField(auto_now=False, auto_now_add=False)
+    publish = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True)
     create_date = models.DateTimeField(auto_now=True, auto_now_add=False)
     # first one on initial creation set it, second indicates update each time its saved
     update_date = models.DateTimeField(auto_now=False, auto_now_add=True)
@@ -54,6 +60,12 @@ class Post(models.Model):
         content = self.content
         marked_down = markdown(content)
         return mark_safe(marked_down) # now it is marked safe and the html will be rendered
+
+    @property
+    def comments(self):
+        instance = self
+        qs = Comment.objects.filter_by_instance(instance)
+        return qs
 
 
 def create_slug(instance, new_slug=None):

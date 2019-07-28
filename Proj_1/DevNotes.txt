@@ -49,7 +49,7 @@ add to Settings installed apps
 add CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 in the template files:
-add {% load crispy_forms_tags %}
+add {% load crispy_forms_tags %} (added to post_form.html)
 edit {{ form.as_p }} to {{ form|crispy }}
 may require some modification to the css to change margins
 the div name is .wmd-panel
@@ -63,4 +63,11 @@ important ensured it is not over ridden
 
 need to run collect static to move the files to the cdn
 
+Bootstrap input groups
+======================
 
+add the cdn to the base template just after bootstrap
+https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css
+then modify what was the input class - change to button and then add the fontawsome class to it like below
+
+<button class="btn btn-default" type="submit"><i class="fa fa-search"></i> </button>

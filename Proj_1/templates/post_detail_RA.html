@@ -7,22 +7,27 @@
 {% block content %}
 <div class="col-sm-6 col-sm-offset-3">
 
-<h2>Post detail</h2>
+<h2>Our Post detail form</h2>
     <p>
+        This is the Post_detail page<br/>
         {% if instance.image %}
             <img src="{{ instance.image.url }}" class="img-responsive img-thumbnail" /><br/>
         {% endif %}
-        Number {{ instance.id }} : {{ instance.title }}<br/>
+        Post Made :{{ instance.id }} {{ instance.title }}<br/>
         Status =
         {% if instance.draft %}
-            <span style="color:red;">Draft</span>
+        <span style="color:red;">Draft</span>
         {% else %}
-            Published
+        Published
         {% endif %}
         <br><hr/>
-        {{ instance.get_markdown | truncatewords_html:8 }}
-        <small class="text-muted"> On : {{ instance.create_date }}<br/>
-            Updated: {{ instance.update_date }}<br/></small>
+
+        <!-- <div class="content-markdown"> now disabled due to the server operation of the markdown-->
+        <!--    Post Content : {{ instance.content }}<br/> -->
+            {{ instance.get_markdown | truncatewords_html:8 }}
+            On : {{ instance.create_date }}<br/>
+            Updated: {{ instance.update_date }}<br/>
+       <!--  </div> -->
     </p><hr/>
     {% if instance.user.get_full_name %}
         <p>Author: {{ instance.user.get_full_name }}</p>
@@ -34,28 +39,33 @@
     {# share_string #}Share string:
     {{ instance.content|truncatechars:20|urlify }}<br/>
 
-    <!--Comments as property: see RA version-->
-
+    Comments as property:
+    <br/>
+    {{ instance.comments.all }}
     <p><div class="fb-like" data-href="{{ request.build_absolute_uri }}" data-layout="button_count" data-action="like" data-show-faces="true" data-share="true"></div>
         <span class="fb-comments-count" data-href="{{ request.build_absolute_uri }}"></span>
     <div>
         <hr/>
-        <p class="lead"><h3>Comments</h3></p>
+        <!--{{ instance.comment_set.all }} only workes when there is a direct relationship between comments and posts-->
+        <p class="lead">Comments</p>
         {% for comment in comments %}
-            <blockquote class="blockquote">
-                <p class="mb-0">{{ comment.content }} </p>
-                <footer class="blockquote-footer"> {{ comment.user }}, {{comment.timestamp|timesince }} ago.</footer>
+            <blockquote>
+                <p>{{ comment.content }} </p>
+                <footer>By {{ comment.user }}, {{comment.timestamp|timesince }} ago.</footer>
             </blockquote><hr/>
         {% endfor %}
     </div>
+ <!--   <div class="fb-comments" data-href="{{ request.build_absolute_uri }}" data-width="85%" data-numposts="5"></div> -->
     <hr/>
 
     <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}"> Facebook </a>
     <a href="https://twitter.com/home?status={{ instance.content|truncatechars:80|urlify  }}%20{{ request.build_absolute_uri }}">
-         Twitter</a>
+         Twitter
+    </a>
     <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ request.build_absolute_uri }}&
         title={{ instance.title }}%20&summary={{ instance.content|truncatechars:80|urlify  }}%20&source={{ request.build_absolute_uri }}">
-         Linkedin</a>
+         Linkedin
+    </a>
 </div>
 {% endblock content%}
 
