@@ -41,12 +41,22 @@
     <div>
         <hr/>
         <p class="lead"><h3>Comments</h3></p>
+        <form method="POST" action="." >{% csrf_token %}
+            {{ form|crispy }}
+            <input type="submit" value="Post comment" class="btn btn-secondary">
+        </form>
         {% for comment in comments %}
             <blockquote class="blockquote">
                 <p class="mb-0">{{ comment.content }} </p>
                 <footer class="blockquote-footer"> {{ comment.user }}, {{comment.timestamp|timesince }} ago.</footer>
+                <form method="POST" action="." >{% csrf_token %}
+                    {{ form|crispy }}
+                <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                <input type="submit" value="Reply" class="btn btn-secondary">
+        </form>
             </blockquote><hr/>
         {% endfor %}
+
     </div>
     <hr/>
 

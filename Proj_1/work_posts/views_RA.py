@@ -10,7 +10,7 @@ from django.utils import timezone
 from comments.forms import CommentForm
 from comments.models import Comment 
 from .models import Post, Robot
-from .forms import PostForm, RobotForm
+from .forms import PostForm, RobotForm #this now to create the link to the forms module
 
 def post_create(request): #when the form submits, it requests the same url, comes to this form and is then rendered again
     if not request.user.is_staff or not request.user.is_superuser:
@@ -22,8 +22,15 @@ def post_create(request): #when the form submits, it requests the same url, come
         instance.user = request.user
         instance.save()
         messages.success(request,'Successfully saved')
+        #return HttpResponseRedirect(instance.get_absolute_url()) this returned the instance but the list makes more sense
         return redirect('list')
-
+    # else:      just removed since it serves no purpose logically but demonstrates the application
+    #     messages.error(request, 'Failed to saved')
+    # or None allows the unused form to load without validation errors
+    # the below is possible but the built in forms does it
+    # if request.method == 'POST':
+    #     print(request.POST.get('content'))
+    #     print(request.POST.get('title'))
     context = {
         'form': form,
     }
@@ -42,40 +49,46 @@ def post_detail(request, slug=None):
         if not request.user.is_superuser or not request.user.is_staff:
             raise Http404
     share_string = quote_plus(instance.content)
-    comments = Comment.objects.filter_by_instance(instance)
+    # this used for public sharing
+    # below was the first method to get the comments per post
+    # content_type = ContentType.objects.get_for_model(Post)
+    # obj_id = instance.id # now handled by the method in the model
+    # comments = Comment.objects.filter(content_type = content_type, object_id = obj_id)
+    comments = Comment.objects.filter_by_instance(instance) # can define other types as well to suit
+    # if you want to use the comments as a property, remove the line above and take the one below
+    # comments = instance.comments  - this is the property
+    # the form below was there before but never used - the page works fine without it
+    #    form = PostForm(request.POST or None, request.FILES or None, instance=instance)
 
     initial_data = {
         "content_type": instance.get_content_type,
         "object_id": instance.id
     }
+    # debugging stuff
+    # c_type = initial_data.get("content_type")
+    # print(c_type)
+    # print(initial_data.get("object_id"))
 
     comment_form = CommentForm(request.POST or None, initial=initial_data)
 
     if comment_form.is_valid():
+        # print(comment_form.cleaned_data)
+        # print("data clean should be above!")
         c_type = comment_form.cleaned_data.get("content_type")
         obj_id = comment_form.cleaned_data.get("object_id")
         content_data = comment_form.cleaned_data.get("content")
         content_type = ContentType.objects.get(model=c_type)
-        parent_obj = None
-        try:
-            parent_id = int(request.POST.get('parent_id'))
-        except:
-            parent_id = None
-
-        if parent_id:
-            parent_qs = Comment.objects.filter(id=parent_id)
-            if parent_qs.exists():
-                parent_obj = parent_qs.first()
-
         new_comment, created = Comment.objects.get_or_create(
             user = request.user,
             content_type = content_type,
             object_id = obj_id,
-            content = content_data,
-            parent = parent_obj,
+            content = content_data
         )
-        return HttpResponseRedirect(new_comment.content_object.get_absolute_url())
+        # if created:
+        #     print('Finally done!')
 
+    # else:
+    #     print('Some issue with the submit')
 
     context = {
         'instance': instance,
@@ -83,7 +96,6 @@ def post_detail(request, slug=None):
         'form': comment_form,
         'share_string': share_string,
         'comments': comments,
-        'content':''
     }
     return render(request, 'post_detail.html', context)
 
