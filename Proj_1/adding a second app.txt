@@ -12,3 +12,5 @@ generic foreign keys
 ====================
 use of {{ instance.comment_set.all }} will no longer work since there is a new relationship
 
+this uses a relation between the object type and the object ID like a composite key
+
