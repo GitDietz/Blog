@@ -75,7 +75,7 @@ def post_detail(request, slug=None):
             parent = parent_obj,
         )
         return HttpResponseRedirect(new_comment.content_object.get_absolute_url())
-
+        # some method to reload the
 
     context = {
         'instance': instance,
