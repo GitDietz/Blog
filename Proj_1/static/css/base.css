@@ -6,3 +6,11 @@ h1 {
     margin-left: 0% !important;
     margin-right: 0% !important;
 }
+
+.comment-reply {
+    display: none;
+}
+
+.comment-reply-btn {
+    color: blue;
+}

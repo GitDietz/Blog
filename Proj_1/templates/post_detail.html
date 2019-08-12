@@ -48,21 +48,25 @@
         {% for comment in comments %}
             <blockquote class="blockquote">
                 <p class="mb-0">{{ comment.content }} </p>
-                <footer class="blockquote-footer"> {{ comment.user }}, {{comment.timestamp|timesince }} ago.</footer>
+                <footer class="blockquote-footer"> {{ comment.user }}, {{comment.timestamp|timesince }} ago. |
+                    {% if comment.children.count > 0 %}{{ comment.children.count}}
+                    Comment{% if comment.children.count > 0 %}s{% endif %} |{% endif %}
+                <a class="comment-reply-btn" href="#">Reply</a> </footer>
                 <!--second form inside for the replied to comments , used this class before col-md-12 offset-md--->
-                <div class="comment-reply" style="display:none;">
+                <div class="comment-reply" >
                     {% for child_comment in comment.children %}
                         <blockquote>
                             <p>{{ child_comment.content }}</p>
                             <footer class="blockquote-footer">via {{ child_comment.user }} | {{child_comment.timestamp|timesince }} ago</footer>
                         </blockquote>
                     {% endfor %}
+
+                    <form method="POST" action="." >{% csrf_token %}
+                        {{ form|crispy }}
+                        <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                        <input type="submit" value="Reply" class="btn btn-secondary">
+                    </form>
                 </div>
-                <form method="POST" action="." >{% csrf_token %}
-                    {{ form|crispy }}
-                    <input type="hidden" name="parent_id" value="{{ comment.id }}">
-                    <input type="submit" value="Reply" class="btn btn-secondary">
-                </form>
             </blockquote><hr/>
         {% endfor %}
 
