@@ -9,6 +9,7 @@ from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 from markdown_deux import markdown
 
+from .utils import get_read_time
 from comments.models import Comment
 
 class PostManager(models.Manager):
@@ -39,10 +40,10 @@ class Post(models.Model):
     content = models.TextField()
     draft = models.BooleanField(default=False)
     publish = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True)
+    read_time = models.IntegerField(default=0)
     create_date = models.DateTimeField(auto_now=True, auto_now_add=False)
     # first one on initial creation set it, second indicates update each time its saved
     update_date = models.DateTimeField(auto_now=False, auto_now_add=True)
-
     objects = PostManager() # this instanciated the class
 
     def __str__(self):
@@ -89,6 +90,8 @@ def pre_save_post_receiver(sender, instance,*args, **kwargs):
     if not instance.slug:
         instance.slug = create_slug(instance)
 
+    if instance.content:
+        instance.read_time = get_read_time(instance.get_markdown())
 
 # def pre_save_post_receiver(sender, instance,*args, **kwargs):
 #     slug = slugify(instance.title)

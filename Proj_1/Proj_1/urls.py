@@ -7,6 +7,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^comments/', include("comments.urls", namespace='comments')),
     # url(r'^posts/$', "work_posts.views.post_home"), # the direct method this
     url(r'^posts/', include("work_posts.urls")),
     # this includes the urls file under the work_post folder, but only the part after "posts/"
