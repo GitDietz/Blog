@@ -22,7 +22,10 @@
         <br><hr/>
         {{ instance.get_markdown | truncatewords_html:8 }}
         <small class="text-muted"> On : {{ instance.create_date }}<br/>
-            Updated: {{ instance.update_date }}<br/></small>
+            Updated: {{ instance.update_date }}<br/>
+            Read: {{instance.read_time}} minute{% if instance.read_time > 1 %}s{% endif %}<br/>
+        </small>
+
     </p><hr/>
     {% if instance.user.get_full_name %}
         <p>Author: {{ instance.user.get_full_name }}</p>
@@ -48,16 +51,16 @@
         {% for comment in comments %}
             <blockquote class="blockquote">
                 <p class="mb-0">{{ comment.content }} </p>
-                <footer class="blockquote-footer"> {{ comment.user }}, {{comment.timestamp|timesince }} ago. |
-                    {% if comment.children.count > 0 %}{{ comment.children.count}}
-                    Comment{% if comment.children.count > 0 %}s{% endif %} |{% endif %}
-                <a class="comment-reply-btn" href="#">Reply</a> </footer>
+                <footer class="blockquote-footer"> {{ comment.id }} {{ comment.user }}, {{comment.timestamp|timesince }} ago. |
+                    {{ comment.children.count}} Comment{% if comment.children.count > 0 %}s{% endif %}
+                <a class="comment-reply-btn" href="#">Reply  </a><a href="{{ comment.get_absolute_url }}">Thread</a> </footer>
                 <!--second form inside for the replied to comments , used this class before col-md-12 offset-md--->
                 <div class="comment-reply" >
                     {% for child_comment in comment.children %}
                         <blockquote>
                             <p>{{ child_comment.content }}</p>
-                            <footer class="blockquote-footer">via {{ child_comment.user }} | {{child_comment.timestamp|timesince }} ago</footer>
+                            <footer class="blockquote-footer">{{ child_comment.id }} via {{ child_comment.user }} |
+                                {{child_comment.timestamp|timesince }} ago</footer>
                         </blockquote>
                     {% endfor %}
 

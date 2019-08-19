@@ -12,6 +12,7 @@ from comments.models import Comment
 from .models import Post, Robot
 from .forms import PostForm, RobotForm
 
+
 def post_create(request): #when the form submits, it requests the same url, comes to this form and is then rendered again
     if not request.user.is_staff or not request.user.is_superuser:
         raise Http404
@@ -48,7 +49,10 @@ def post_detail(request, slug=None):
         "content_type": instance.get_content_type,
         "object_id": instance.id
     }
-
+    # print('read time is ' + get_read_time(instance.content))
+    # above removed to rather put it in the daatabse with the models
+    # use get_markdown
+    print(initial_data)
     comment_form = CommentForm(request.POST or None, initial=initial_data)
 
     if comment_form.is_valid():
