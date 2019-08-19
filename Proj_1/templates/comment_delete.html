@@ -9,7 +9,8 @@
 <h1>Confirm delete</h1>
     <form method="POST" action="." >{% csrf_token %}
         <p>Are you sure you want to delete {{ object }}?</p>
-        <input type="hidden" name="parent_id" value="{{ comment.id }}">
+        <p>{{ object.id }}</p>
+        <input type="hidden" name="id" value="{{ object.id }}">
         <input type="submit" value="Delete" class="btn btn-warning">
         <a href='{{ object.get_absolute_url }}' class="btn btn-secondary">Cancel</a>
     </form>

@@ -19,16 +19,16 @@ class CommentManager(models.Manager):
 
 
 class Comment(models.Model):
-    user        = models.ForeignKey(settings.AUTH_USER_MODEL, default=1)
-    # post        = models.ForeignKey(Post) #this makes the relation to the posts model, what if it is not related to a post?
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, default=1)
+    # post = models.ForeignKey(Post) #this makes the relation to the posts model, what if it is not related to a post?
     # above now removed to replace with the generic stuff
-    content_type    = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id       = models.PositiveIntegerField()
-    content_object  = GenericForeignKey('content_type', 'object_id')
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
     parent = models.ForeignKey('self', null=True, blank=True)
 
-    content     = models.TextField()
-    timestamp   = models.DateTimeField(auto_now=True, auto_now_add=False)
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now=True, auto_now_add=False)
     objects = CommentManager()
 
     class Meta:
@@ -41,6 +41,9 @@ class Comment(models.Model):
 
     def get_absolute_url(self):
         return reverse("comments:thread", kwargs={"id": self.id})
+
+    def get_delete_url(self):
+        return reverse("comments:delete", kwargs={"id": self.id})
 
     def children(self):
         return Comment.objects.filter(parent=self)

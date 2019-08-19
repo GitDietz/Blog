@@ -10,16 +10,19 @@
 
 
     <p class="mb-0">{{ comment.content }} </p>
-    <footer class="blockquote-footer"> {{ comment.user }}, {{comment.timestamp|timesince }} ago |
+    <footer class="blockquote-footer">No ({{ comment.id }}) {{ comment.user }}, {{comment.timestamp|timesince }} ago |
         {% if comment.children.count > 0 %}{{ comment.children.count}}
-        Comment{% if comment.children.count > 0 %}s{% endif %} |{% endif %}
-    
+        Comment{% if comment.children.count > 0 %}s{% endif %} {% endif %}{% if comment.user == request.user %}
+        <a href="{{ comment.get_delete_url }}">| Delete comment</a>{% endif %}
+    </footer>
     <!--second form inside for the replied to comments , used this class before col-md-12 offset-md--->
     <div>
         {% for child_comment in comment.children %}
             <blockquote>
                 <p>{{ child_comment.content }}</p>
-                <footer class="blockquote-footer">via {{ child_comment.user }} | {{child_comment.timestamp|timesince }} ago</footer>
+                <footer class="blockquote-footer">No ({{ child_comment.id }}) via {{ child_comment.user }} | {{child_comment.timestamp|timesince }} ago
+                {% if child_comment.user == request.user %}<a href="{{ child_comment.get_delete_url  }}"> | Delete</a>{% endif %}
+                </footer>
             </blockquote>
         {% endfor %}
 
