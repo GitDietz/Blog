@@ -20,11 +20,12 @@ def comment_delete(request, id):
         return response
 
     if request.method == "POST":
-        print(f'POST returned from delete with id = {obj.object_id}')
+        # print(f'POST returned from delete with id = {obj.object_id}')  # this happens to be the post id not the comment object so irrelevant
         parent_obj_url = obj.content_object.get_absolute_url()
-        obj.delete
+        obj.delete()
         messages.success(request, 'This has been deleted')
         return HttpResponseRedirect(parent_obj_url)
+
     context = {
         'object' : obj
     }
