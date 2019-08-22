@@ -1,9 +1,12 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, Http404, HttpResponse
 from .forms import CommentForm
 from .models import Comment
 
+
+@login_required(login_url='/login/') # or a setting LOGIN_URL = '/login/'
 def comment_delete(request, id):
     # obj = get_object_or_404(Comment, id=id)
     try:
