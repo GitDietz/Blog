@@ -15,7 +15,7 @@ class UserLoginForm(forms.Form):
     def clean(self, *args, **kwargs):
         username = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')
-
+        print(f'Attempt to login {username}')
         # possible to use
         # user_qs = User.objects.filter(username=username)
         # if user_qs.count ==1:

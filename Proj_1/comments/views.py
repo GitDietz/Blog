@@ -2,11 +2,12 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, Http404, HttpResponse
+from Proj_1.logger import mylog
 from .forms import CommentForm
 from .models import Comment
 
 
-@login_required(login_url='/login/') # or a setting LOGIN_URL = '/login/'
+@login_required  # (login_url='/login/') # or a setting LOGIN_URL = '/login/'
 def comment_delete(request, id):
     # obj = get_object_or_404(Comment, id=id)
     try:
@@ -34,8 +35,10 @@ def comment_delete(request, id):
     }
     return render(request, 'comment_delete.html', context)
 
+
 def comment_thread(request,id):
     # print('inside function')
+    mylog.info('Comment|Thread ')
     # obj = get_object_or_404(Comment, id=id) this could be an issue if the wrong id is inserted, make more robust
     try:
         obj = Comment.objects.get(id=id)

@@ -1,5 +1,6 @@
 from urllib.parse import quote_plus
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
@@ -7,13 +8,15 @@ from django.http import HttpResponse, HttpResponseRedirect,Http404
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 
+from Proj_1.Proj_1.logger import mylog
 from comments.forms import CommentForm
 from comments.models import Comment 
 from .models import Post, Robot
 from .forms import PostForm, RobotForm
 
-
+@login_required
 def post_create(request): #when the form submits, it requests the same url, comes to this form and is then rendered again
+    print(f'Create view, user = {request.user.username} is authenticated ? {request.user.is_authenticated()}')
     if not request.user.is_staff or not request.user.is_superuser:
         raise Http404
 
@@ -37,6 +40,7 @@ def is_published(publish_date):
             return True
     return False
 
+@login_required
 def post_detail(request, slug=None):
     instance = get_object_or_404(Post, slug=slug)   # can use any parameter in the model
     if instance.draft or is_published(instance.publish):
@@ -102,6 +106,7 @@ def post_detail_old(request): # now replaced with the above
     #return HttpResponse("<p>Hellow Wolly - detail</p>")
 
 def post_list(request):
+    mylog.info('Comment|Thread ')
     # queryset_list = Post.objects.filter(draft=False).filter(publish__lte=timezone.now())        #.all()   #.order_by("-create_date") no longer needed since adding the order to the model
     if not request.user.is_superuser or not request.user.is_staff:
         queryset_list = Post.objects.active() #this will now get the model manager version of the override on all, called active
@@ -146,6 +151,7 @@ def post_list(request):
     #     }
     return render(request, 'post_list.html', context)
 
+@login_required
 def post_update(request, slug=None):
     if not request.user.is_staff or not request.user.is_superuser:
         raise Http404
@@ -164,6 +170,7 @@ def post_update(request, slug=None):
     return render(request, 'post_form.html', context)
     # return HttpResponse("<p>Hellow Wolly - update some</p>") The very basic to confirm the view responds
 
+@login_required
 def post_delete(request, slug=None):
     if not request.user.is_staff or not request.user.is_superuser:
         raise Http404
