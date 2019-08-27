@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, Http404, HttpResponse
-from Proj_1.logger import mylog
+# from Proj_1.logger import mylog
 from .forms import CommentForm
 from .models import Comment
 
@@ -10,6 +10,7 @@ from .models import Comment
 @login_required  # (login_url='/login/') # or a setting LOGIN_URL = '/login/'
 def comment_delete(request, id):
     # obj = get_object_or_404(Comment, id=id)
+    print('Comment|Delete| user = {request.user.username}')
     try:
         obj = Comment.objects.get(id=id)
         print(f'object id is {obj.id}')
@@ -17,7 +18,7 @@ def comment_delete(request, id):
         raise Http404
 
     if obj.user != request.user:
-        # messages.success(request,"you have no premission to do this")
+        # messages.success(request,"you have no permission to do this")
         # raise Http404
         response = HttpResponse("you have no permission to do this")
         response.status_code = 403
@@ -38,7 +39,7 @@ def comment_delete(request, id):
 
 def comment_thread(request,id):
     # print('inside function')
-    mylog.info('Comment|Thread ')
+    print('Comment|Thread | user = {request.user.username}')
     # obj = get_object_or_404(Comment, id=id) this could be an issue if the wrong id is inserted, make more robust
     try:
         obj = Comment.objects.get(id=id)
@@ -57,7 +58,7 @@ def comment_thread(request,id):
     # print(dir(form))
     if form.errors:
         print(form.errors)
-    if form.is_valid():
+    if form.is_valid() and request.user.is_authenticated():
         c_type = form.cleaned_data.get("content_type")
         obj_id = form.cleaned_data.get("object_id")
         content_data = form.cleaned_data.get("content")

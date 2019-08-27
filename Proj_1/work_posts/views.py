@@ -8,7 +8,7 @@ from django.http import HttpResponse, HttpResponseRedirect,Http404
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 
-from Proj_1.Proj_1.logger import mylog
+# from Proj_1.Proj_1.logger import mylog
 from comments.forms import CommentForm
 from comments.models import Comment 
 from .models import Post, Robot
@@ -17,7 +17,7 @@ from .forms import PostForm, RobotForm
 @login_required
 def post_create(request): #when the form submits, it requests the same url, comes to this form and is then rendered again
     print(f'Create view, user = {request.user.username} is authenticated ? {request.user.is_authenticated()}')
-    if not request.user.is_staff or not request.user.is_superuser:
+    if not request.user.is_staff and not request.user.is_superuser and not request.user.is_authenticated():
         raise Http404
 
     form = PostForm(request.POST or None, request.FILES or None)
@@ -42,6 +42,7 @@ def is_published(publish_date):
 
 @login_required
 def post_detail(request, slug=None):
+    print(f'Post|detail|user = {request.user.username}')
     instance = get_object_or_404(Post, slug=slug)   # can use any parameter in the model
     if instance.draft or is_published(instance.publish):
         if not request.user.is_superuser or not request.user.is_staff:
@@ -59,7 +60,7 @@ def post_detail(request, slug=None):
     print(initial_data)
     comment_form = CommentForm(request.POST or None, initial=initial_data)
 
-    if comment_form.is_valid():
+    if comment_form.is_valid() and request.user.is_authenticated():
         c_type = comment_form.cleaned_data.get("content_type")
         obj_id = comment_form.cleaned_data.get("object_id")
         content_data = comment_form.cleaned_data.get("content")
@@ -106,7 +107,7 @@ def post_detail_old(request): # now replaced with the above
     #return HttpResponse("<p>Hellow Wolly - detail</p>")
 
 def post_list(request):
-    mylog.info('Comment|Thread ')
+    print(f'Post|List| user = {request.user.username}')
     # queryset_list = Post.objects.filter(draft=False).filter(publish__lte=timezone.now())        #.all()   #.order_by("-create_date") no longer needed since adding the order to the model
     if not request.user.is_superuser or not request.user.is_staff:
         queryset_list = Post.objects.active() #this will now get the model manager version of the override on all, called active
