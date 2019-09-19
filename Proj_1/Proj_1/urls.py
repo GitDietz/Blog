@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'register/',register_view, name='register'),
     url(r'login/',login_view, name='login'),
     url(r'logout/',logout_view, name='logout'),
+    url(r'shop/',include("shop.urls", namespace='shop')),
     url(r'^', include("work_posts.urls")),
     # this includes the urls file under the work_post folder, but only the part after "posts/"
     # in work_posts.urls you will only see the remaining part so posts/delete is split and routed
